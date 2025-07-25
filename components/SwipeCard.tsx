@@ -3,7 +3,6 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  ImageSourcePropType,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -12,20 +11,13 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Shoe } from '../lib/store';
 
 const { width: W } = Dimensions.get('window');
 const THRESH_X = 0.25 * W;
 const THRESH_UP = -120;
 
 // ---------- Types ----------
-export type Shoe = {
-  id: string;
-  brand: string;
-  model: string;
-  price: number;
-  image: ImageSourcePropType;
-};
-
 type Props = {
   shoe: Shoe;
   isTop: boolean;
@@ -54,10 +46,15 @@ export const SwipeCard: React.FC<Props> = ({ shoe, isTop, onSwipe }) => {
 
       if (dir) {
         const toX = dir === 'left' ? -W * 1.5 : dir === 'right' ? W * 1.5 : 0;
-        const toY = dir === 'up' ? -W : dy;
+        const toY = dir === 'up' ? -W * 2 : dy;
 
-        tx.value = withSpring(toX, {}, () => runOnJS(onSwipe)(dir!, shoe.id));
-        ty.value = withSpring(toY);
+        // Use faster spring config for up swipe to prevent sticking
+        const springConfig = dir === 'up' 
+          ? { damping: 20, stiffness: 200 } 
+          : {};
+
+        tx.value = withSpring(toX, springConfig, () => runOnJS(onSwipe)(dir!, shoe.id));
+        ty.value = withSpring(toY, springConfig);
       } else {
         tx.value = withSpring(0);
         ty.value = withSpring(0);
