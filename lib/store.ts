@@ -7,14 +7,28 @@ export type Shoe = {
   model: string;
   price: number;
   image: number;     // static require(...)
+  selectedSize?: number;
 };
 
 type SwipeDir = 'left' | 'right' | 'up';
 
+export type Filters = {
+  size: number | null;
+  brand: string | null;
+  color: string | null;
+  category: string | null;
+  priceRange: [number, number] | null;
+};
+
 type StoreState = {
   liked: Shoe[];
   cart: Shoe[];
+  preferredSize: number | null;
+  filters: Filters;
   swipe: (shoe: Shoe, dir: SwipeDir) => void;
+  setPreferredSize: (size: number | null) => void;
+  updateFilters: (newFilters: Partial<Filters>) => void;
+  clearFilters: () => void;
   moveToCart: (id: string) => void;
   removeLiked: (id: string) => void;
   removeCart: (id: string) => void;
@@ -23,12 +37,43 @@ type StoreState = {
 export const useStore = create<StoreState>(set => ({
   liked: [],
   cart: [],
+  preferredSize: null,
+  filters: {
+    size: null,
+    brand: null,
+    color: null,
+    category: null,
+    priceRange: null,
+  },
 
   swipe: (shoe, dir) =>
     set(state => {
-      if (dir === 'right') return { liked: [...state.liked, shoe] };
-      if (dir === 'up')    return { cart:  [...state.cart,  shoe] };
+      const shoeWithSize = state.preferredSize 
+        ? { ...shoe, selectedSize: state.preferredSize }
+        : shoe;
+      
+      if (dir === 'right') return { liked: [...state.liked, shoeWithSize] };
+      if (dir === 'up')    return { cart:  [...state.cart,  shoeWithSize] };
       return state; // left = discard
+    }),
+
+  setPreferredSize: (size) =>
+    set({ preferredSize: size }),
+
+  updateFilters: (newFilters) =>
+    set(state => ({
+      filters: { ...state.filters, ...newFilters }
+    })),
+
+  clearFilters: () =>
+    set({
+      filters: {
+        size: null,
+        brand: null,
+        color: null,
+        category: null,
+        priceRange: null,
+      }
     }),
 
   moveToCart: id =>

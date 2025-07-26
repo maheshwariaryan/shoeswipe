@@ -31,6 +31,9 @@ import {
               <View style={styles.info}>
                 <Text style={styles.name}>{item.brand} {item.model}</Text>
                 <Text style={styles.price}>${item.price}</Text>
+                {item.selectedSize && (
+                  <Text style={styles.size}>Size: {item.selectedSize}</Text>
+                )}
                 <Pressable onPress={() => removeCart(item.id)}>
                   <Text style={styles.btnAlt}>Remove</Text>
                 </Pressable>
@@ -68,6 +71,7 @@ import {
     info: { flex: 1, padding: 12, justifyContent: 'space-between' },
     name: { fontSize: 16, fontWeight: '600' },
     price: { fontSize: 14, color: '#888' },
+    size: { fontSize: 12, color: '#666', marginTop: 2 },
     btnAlt: { color: '#ff3b30' },
     footer: {
       position: 'absolute',

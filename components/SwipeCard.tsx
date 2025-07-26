@@ -48,6 +48,7 @@ export const SwipeCard: React.FC<Props> = ({ shoe, isTop, onSwipe }) => {
   };
 
   const tap = Gesture.Tap()
+    .maxDuration(300)
     .onEnd(() => {
       runOnJS(handleTap)();
     });
@@ -84,8 +85,8 @@ export const SwipeCard: React.FC<Props> = ({ shoe, isTop, onSwipe }) => {
       }
     });
 
-  // Combine gestures - tap and pan can work simultaneously
-  const composed = Gesture.Simultaneous(tap, pan);
+  // Pan gesture blocks tap when there's movement, but tap works for gentle taps
+  const composed = Gesture.Race(tap, pan);
 
   const style = useAnimatedStyle(() => ({
     transform: [

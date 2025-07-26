@@ -29,6 +29,9 @@ import {
             <View style={styles.info}>
               <Text style={styles.name}>{item.brand} {item.model}</Text>
               <Text style={styles.price}>${item.price}</Text>
+              {item.selectedSize && (
+                <Text style={styles.size}>Size: {item.selectedSize}</Text>
+              )}
               <View style={styles.btnRow}>
                 <Pressable onPress={() => moveToCart(item.id)}>
                   <Text style={styles.btn}>Add to Cart</Text>
@@ -62,6 +65,7 @@ import {
     info: { flex: 1, padding: 12, justifyContent: 'space-between' },
     name: { fontSize: 16, fontWeight: '600' },
     price: { fontSize: 14, color: '#888' },
+    size: { fontSize: 12, color: '#666', marginTop: 2 },
     btnRow: { flexDirection: 'row', gap: 12 },
     btn: { color: '#007aff' },
     btnAlt: { color: '#ff3b30' },

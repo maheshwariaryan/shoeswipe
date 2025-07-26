@@ -17,7 +17,7 @@ const { width: W, height: H } = Dimensions.get('window');
 
 export default function ShoeDetailModal() {
   const params = useLocalSearchParams();
-  const { swipe } = useStore();
+  const { swipe, preferredSize } = useStore();
   
   // Parse the shoe data from URL params
   const shoe = {
@@ -65,16 +65,18 @@ export default function ShoeDetailModal() {
             Crafted with attention to detail and designed for the modern lifestyle.
           </Text>
 
-          {/* Size selection placeholder */}
+          {/* Size info */}
           <View style={styles.sizeContainer}>
             <Text style={styles.sizeTitle}>Size</Text>
-            <View style={styles.sizeRow}>
-              {[7, 8, 9, 10, 11, 12].map((size) => (
-                <Pressable key={size} style={styles.sizeOption}>
-                  <Text style={styles.sizeText}>{size}</Text>
-                </Pressable>
-              ))}
-            </View>
+            {preferredSize ? (
+              <Text style={styles.sizeInfo}>
+                Will be added as size {preferredSize} (your preference)
+              </Text>
+            ) : (
+              <Text style={styles.sizeHint}>
+                💡 Set your size preference in Settings for seamless shopping
+              </Text>
+            )}
           </View>
 
           {/* Action buttons */}
@@ -180,24 +182,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: '#333',
   },
-  sizeRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  sizeOption: {
-    width: 45,
-    height: 45,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sizeText: {
-    fontSize: 16,
+  sizeInfo: {
+    fontSize: 14,
+    color: '#007aff',
+    marginTop: 4,
     fontWeight: '500',
-    color: '#333',
+  },
+  sizeHint: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+    fontStyle: 'italic',
   },
   actionButtons: {
     flexDirection: 'row',
