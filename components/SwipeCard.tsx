@@ -11,6 +11,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { router } from 'expo-router';
 import { Shoe } from '../lib/store';
 
 const { width: W } = Dimensions.get('window');
@@ -29,6 +30,27 @@ export const SwipeCard: React.FC<Props> = ({ shoe, isTop, onSwipe }) => {
   const tx = useSharedValue(0);
   const ty = useSharedValue(0);
   const rot = useSharedValue(0);
+
+  const handleTap = () => {
+    if (isTop) {
+      // Navigate to shoe detail modal with shoe data as params
+      router.push({
+        pathname: '/shoe-detail' as any,
+        params: {
+          id: shoe.id,
+          brand: shoe.brand,
+          model: shoe.model,
+          price: shoe.price.toString(),
+          image: shoe.image.toString(),
+        },
+      });
+    }
+  };
+
+  const tap = Gesture.Tap()
+    .onEnd(() => {
+      runOnJS(handleTap)();
+    });
 
   const pan = Gesture.Pan()
     .onUpdate(e => {
@@ -62,6 +84,9 @@ export const SwipeCard: React.FC<Props> = ({ shoe, isTop, onSwipe }) => {
       }
     });
 
+  // Combine gestures - tap and pan can work simultaneously
+  const composed = Gesture.Simultaneous(tap, pan);
+
   const style = useAnimatedStyle(() => ({
     transform: [
       { translateX: tx.value },
@@ -79,7 +104,7 @@ export const SwipeCard: React.FC<Props> = ({ shoe, isTop, onSwipe }) => {
 
   // 👇 Conditional wrapper to satisfy TS
   return isTop ? (
-    <GestureDetector gesture={pan}>{cardContent}</GestureDetector>
+    <GestureDetector gesture={composed}>{cardContent}</GestureDetector>
   ) : (
     cardContent
   );
