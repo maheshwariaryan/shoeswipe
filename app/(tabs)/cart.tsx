@@ -6,6 +6,7 @@ import {
     Pressable,
     Image,
   } from 'react-native';
+  import { SafeAreaView } from 'react-native-safe-area-context';
   import { useStore } from '../../lib/store';
   
   export default function CartScreen() {
@@ -14,13 +15,13 @@ import {
   
     if (cart.length === 0)
       return (
-        <View style={styles.center}>
+        <SafeAreaView style={styles.center}>
           <Text style={styles.empty}>Your cart is empty. Swipe up to add!</Text>
-        </View>
+        </SafeAreaView>
       );
   
-    return (
-      <View style={{ flex: 1 }}>
+        return (
+      <SafeAreaView style={{ flex: 1 }}>
         <FlatList
           contentContainerStyle={styles.list}
           data={cart}
@@ -41,7 +42,7 @@ import {
             </View>
           )}
         />
-  
+
         <View style={styles.footer}>
           <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
           {/* Checkout button stub */}
@@ -49,7 +50,7 @@ import {
             <Text style={styles.payTxt}>Checkout</Text>
           </Pressable>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
   

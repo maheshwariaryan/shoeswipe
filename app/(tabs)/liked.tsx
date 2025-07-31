@@ -6,6 +6,7 @@ import {
     Pressable,
     Image,
   } from 'react-native';
+  import { SafeAreaView } from 'react-native-safe-area-context';
   import { useStore } from '../../lib/store';
   
   export default function LikedScreen() {
@@ -13,37 +14,39 @@ import {
   
     if (liked.length === 0)
       return (
-        <View style={styles.center}>
+        <SafeAreaView style={styles.center}>
           <Text style={styles.empty}>No likes yet. Swipe right to add!</Text>
-        </View>
+        </SafeAreaView>
       );
   
     return (
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={liked}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Image source={item.image} style={styles.img} />
-            <View style={styles.info}>
-              <Text style={styles.name}>{item.brand} {item.model}</Text>
-              <Text style={styles.price}>${item.price}</Text>
-              {item.selectedSize && (
-                <Text style={styles.size}>Size: {item.selectedSize}</Text>
-              )}
-              <View style={styles.btnRow}>
-                <Pressable onPress={() => moveToCart(item.id)}>
-                  <Text style={styles.btn}>Add to Cart</Text>
-                </Pressable>
-                <Pressable onPress={() => removeLiked(item.id)}>
-                  <Text style={styles.btnAlt}>Remove</Text>
-                </Pressable>
+      <SafeAreaView style={{ flex: 1 }}>
+        <FlatList
+          contentContainerStyle={styles.list}
+          data={liked}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.row}>
+              <Image source={item.image} style={styles.img} />
+              <View style={styles.info}>
+                <Text style={styles.name}>{item.brand} {item.model}</Text>
+                <Text style={styles.price}>${item.price}</Text>
+                {item.selectedSize && (
+                  <Text style={styles.size}>Size: {item.selectedSize}</Text>
+                )}
+                <View style={styles.btnRow}>
+                  <Pressable onPress={() => moveToCart(item.id)}>
+                    <Text style={styles.btn}>Add to Cart</Text>
+                  </Pressable>
+                  <Pressable onPress={() => removeLiked(item.id)}>
+                    <Text style={styles.btnAlt}>Remove</Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
-          </View>
-        )}
-      />
+          )}
+        />
+      </SafeAreaView>
     );
   }
   
