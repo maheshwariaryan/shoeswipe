@@ -7,6 +7,7 @@ import {
     Image,
   } from 'react-native';
   import { SafeAreaView } from 'react-native-safe-area-context';
+  import { router } from 'expo-router';
   import { useStore } from '../../lib/store';
   
   export default function CartScreen() {
@@ -45,8 +46,10 @@ import {
 
         <View style={styles.footer}>
           <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
-          {/* Checkout button stub */}
-          <Pressable style={styles.payBtn}>
+          <Pressable 
+            style={styles.payBtn}
+            onPress={() => router.push('/checkout')}
+          >
             <Text style={styles.payTxt}>Checkout</Text>
           </Pressable>
         </View>

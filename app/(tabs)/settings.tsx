@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,18 +6,21 @@ import {
   Pressable,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from '../../lib/store';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function SettingsScreen() {
-  const { preferredSize, setPreferredSize } = useStore();
+  const { preferredSize, setPreferredSize, orders } = useStore();
+  const [showOrders, setShowOrders] = useState(false);
 
   const handleSizeSelect = (size: number | null) => {
     setPreferredSize(size);
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
       <View style={styles.header}>
         <Text style={styles.title}>⚙️ Settings</Text>
         <Text style={styles.subtitle}>Customize your shopping experience</Text>
@@ -96,7 +99,46 @@ export default function SettingsScreen() {
           <Text style={styles.infoValue}>2 styles</Text>
         </View>
       </View>
+
+      {/* Order History Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>📦 Order History</Text>
+        <Pressable 
+          style={styles.orderHistoryBtn}
+          onPress={() => setShowOrders(!showOrders)}
+        >
+          <Text style={styles.orderHistoryText}>
+            View Orders ({orders.length})
+          </Text>
+          <Text style={styles.chevron}>{showOrders ? '▼' : '▶'}</Text>
+        </Pressable>
+        
+        {showOrders && (
+          <View style={styles.ordersContainer}>
+            {orders.length === 0 ? (
+              <Text style={styles.noOrdersText}>No orders yet</Text>
+            ) : (
+              orders.map((order) => (
+                <View key={order.id} style={styles.orderCard}>
+                  <View style={styles.orderHeader}>
+                    <Text style={styles.orderId}>{order.id}</Text>
+                    <Text style={styles.orderTotal}>${order.total.toFixed(2)}</Text>
+                  </View>
+                  <Text style={styles.orderDate}>
+                    {new Date(order.timestamp).toLocaleDateString()}
+                  </Text>
+                  <Text style={styles.orderStatus}>Status: {order.status}</Text>
+                  <Text style={styles.orderItems}>
+                    {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                  </Text>
+                </View>
+              ))
+            )}
+          </View>
+        )}
+      </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -104,6 +146,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
+  },
+  scrollView: {
+    flex: 1,
   },
   header: {
     padding: 24,
@@ -203,5 +248,66 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     fontWeight: '500',
+  },
+  orderHistoryBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  orderHistoryText: {
+    fontSize: 16,
+    color: '#007aff',
+  },
+  chevron: {
+    fontSize: 16,
+    color: '#007aff',
+  },
+  ordersContainer: {
+    marginTop: 12,
+  },
+  noOrdersText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    paddingVertical: 20,
+  },
+  orderCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#e0e0e0',
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  orderId: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+  },
+  orderTotal: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#007aff',
+  },
+  orderDate: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 2,
+  },
+  orderStatus: {
+    fontSize: 14,
+    color: '#28a745',
+    marginBottom: 2,
+  },
+  orderItems: {
+    fontSize: 14,
+    color: '#666',
   },
 }); 

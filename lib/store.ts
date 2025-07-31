@@ -20,9 +20,33 @@ export type Filters = {
   priceRange: [number, number] | null;
 };
 
+export type ShippingInfo = {
+  email: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+};
+
+export type Order = {
+  id: string;
+  items: Shoe[];
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: number;
+  shippingInfo: ShippingInfo;
+  timestamp: string;
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
+};
+
 type StoreState = {
   liked: Shoe[];
   cart: Shoe[];
+  orders: Order[];
   preferredSize: number | null;
   filters: Filters;
   swipe: (shoe: Shoe, dir: SwipeDir) => void;
@@ -32,11 +56,14 @@ type StoreState = {
   moveToCart: (id: string) => void;
   removeLiked: (id: string) => void;
   removeCart: (id: string) => void;
+  clearCart: () => void;
+  completeOrder: (order: Order) => void;
 };
 
 export const useStore = create<StoreState>(set => ({
   liked: [],
   cart: [],
+  orders: [],
   preferredSize: null,
   filters: {
     size: null,
@@ -91,4 +118,12 @@ export const useStore = create<StoreState>(set => ({
 
   removeCart: id =>
     set(state => ({ cart: state.cart.filter(s => s.id !== id) })),
+
+  clearCart: () =>
+    set({ cart: [] }),
+
+  completeOrder: (order) =>
+    set(state => ({ 
+      orders: [...state.orders, order]
+    })),
 }));
